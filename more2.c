@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#define PAGELEN 12
+# define PAGELEN 12
 # define LINELEN 512
 void do_more(FILE *);
 int see_more(FILE *);
