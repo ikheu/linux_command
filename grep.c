@@ -31,6 +31,7 @@ int main(int ac, char * av[]) {
             if (grep(av[1], f, ac > 3 ? av[i] : NULL) > 0) {
                 nmatch++;
             }
+            fclose(f);
         }
     }
     return nmatch == 0;
