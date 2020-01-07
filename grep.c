@@ -1,8 +1,41 @@
 # include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 
-int main(int ac, char * av) {
+int grep(char *regexp, FILE *f, char *name);
+int match(char *regexp, char *text);
+int matchhere(char *regexp, char *text);
+int matchstar(int c, char *regexp, char *text);
 
+
+int main(int ac, char * av[]) {
+    int i, nmatch;
+    FILE * f;
+
+    if (ac < 2) {
+        fprintf(stderr, "usage: grep regexp [file ...]\n");
+        exit(1);
+    }
+    nmatch = 0;
+    if (ac == 2) {
+        if (grep(av[1], stdin, NULL)) {
+            nmatch++;
+        }
+    } else {
+        for (i = 2; i < ac; i++) {
+            f = fopen(av[i], "r");
+            if (f == NULL) {
+                fprintf(stderr, "cannot open %s\n", av[i]);
+                continue;
+            }
+            if (grep(av[1], f, ac > 3 ? av[i] : NULL) > 0) {
+                nmatch++;
+            }
+        }
+    }
+    return nmatch == 0;
 }
+
 
 int grep(char *regexp, FILE *f, char *name) {
     int n, nmatch;
@@ -16,7 +49,7 @@ int grep(char *regexp, FILE *f, char *name) {
         if (match(regexp, buf)) {
             nmatch++;
             if (name != NULL) {
-                printf("%s:", name);
+                printf("%s: ", name);
             }
             printf("%s\n", buf);
         }
@@ -26,8 +59,7 @@ int grep(char *regexp, FILE *f, char *name) {
 
 
 /* match: search for regexp anywhere in text */
-int match(char *regexp, char *text)
-{
+int match(char *regexp, char *text) {
     if (regexp[0] == '^')
         return matchhere(regexp+1, text);
     do {    /* must look even if string is empty */
@@ -37,9 +69,9 @@ int match(char *regexp, char *text)
     return 0;
 }
 
+
 /* matchhere: search for regexp at beginning of text */
-int matchhere(char *regexp, char *text)
-{
+int matchhere(char *regexp, char *text) {
     if (regexp[0] == '\0')
         return 1;
     if (regexp[1] == '*')
@@ -51,9 +83,9 @@ int matchhere(char *regexp, char *text)
     return 0;
 }
 
+
 /* matchstar: search for c*regexp at beginning of text */
-int matchstar(int c, char *regexp, char *text)
-{
+int matchstar(int c, char *regexp, char *text) {
     do {    /* a * matches zero or more instances */
         if (matchhere(regexp, text))
             return 1;

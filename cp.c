@@ -1,4 +1,5 @@
 # include <stdio.h>
+# include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
 
@@ -20,8 +21,8 @@ int main(int ac, char * av[]) {
         opps("cannot open", av[1]);
     }
 
-    if ((out_fd = create(av[2], COPYMODE)) == -1) {
-        opps("cannot create", avc[1]);
+    if ((out_fd = creat(av[2], COPYMODE)) == -1) {
+        opps("cannot create", av[1]);
     }
 
     while ((n_chars = read(in_fd, buf, BUFFERSIZE)) > 0) {
@@ -33,7 +34,7 @@ int main(int ac, char * av[]) {
         opps("read error from", av[1]);
     }
     if (close(in_fd) == -1 || close(out_fd) == -1) {
-        opps("error closing files")
+        opps("error closing files", "");
     }
 }
 
