@@ -5,3 +5,4 @@
 - ls
 - more
 - pwd
+- write
